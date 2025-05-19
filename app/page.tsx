@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Clock, FlameIcon as Fire, Menu, Search, X } from "lucide-react"
@@ -19,29 +19,25 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearching, setIsSearching] = useState(false)
 
-  // Refs for scroll functionality
+  // Define refs for scrolling to sections
   const topStoriesRef = useRef<HTMLDivElement>(null)
   const regionalRef = useRef<HTMLDivElement>(null)
-  const opinionRef = useRef<HTMLDivElement>(null)
   const galleryRef = useRef<HTMLDivElement>(null)
 
+  // Image data for gallery section
+  const imageData = [
+    { location: "Kathmandu", label: "Kathmandu Durbar Square", src: "/10.jpeg" },
+    { location: "Everest", label: "Mount Everest Base Camp", src: "/11.jpg" },
+    { location: "Pokhara", label: "Phewa Lake, Pokhara", src: "/12.jpeg" },
+    { location: "Chitwan", label: "Chitwan National Park", src: "/13.jpg" },
+  ]
+
   // Function to handle smooth scrolling
-  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
-    setMobileMenuOpen(false)
+  const scrollToSection = (ref: React.RefObject<HTMLElement>) => {
     if (ref.current) {
-      window.scrollTo({
-        top: ref.current.offsetTop - 80,
-        behavior: "smooth",
-      })
+      ref.current.scrollIntoView({ behavior: "smooth" })
     }
   }
-
-  const imageData = [
-  { location: "Kathmandu", label: "Kathmandu Durbar Square", src: "/10.jpeg" },
-  { location: "Everest", label: "Mount Everest Base Camp", src: "/11.jpg" },
-  { location: "Pokhara", label: "Phewa Lake, Pokhara", src: "/12.jpeg" },
-  { location: "Chitwan", label: "Chitwan National Park", src: "/13.jpg" },
-];
 
   // Handle search form submission
   const handleSearch = (e: React.FormEvent) => {
@@ -72,6 +68,7 @@ export default function Home() {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b border-[#222222] bg-black shadow-md">
         <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+          {/* Left: Logo & Menu toggle */}
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -82,44 +79,54 @@ export default function Home() {
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               <span className="sr-only">Toggle menu</span>
             </Button>
-            <Link href="/" className="flex items-center gap-2">
-              <div className="text-xl font-bold tracking-tighter">
-                 <Image
-                  src="/logo.png"
-                  alt="logo"
-                  width={120}
-                  height={120}
-                  className="object-cover transition-transform "
-                />
-              </div>
+            <Link href="#" className="flex items-center gap-2">
+              <Image
+                src="/logo.png"
+                alt="logo"
+                width={120}
+                height={120}
+                className="object-cover transition-transform"
+              />
             </Link>
           </div>
+
+          {/* Center: Nav menu */}
           <nav className="hidden md:flex md:gap-6">
+           <Link href="#">
             <button
-              onClick={() => scrollToSection({ current: document.getElementById("top") })}
+              onClick={() => scrollToSection({ current: document.getElementById("top") as HTMLElement })}
               className="text-sm font-medium hover:text-red-700 transition-colors"
             >
               Home
             </button>
+           </Link>
+           <Link href="#topstories">
             <button
               onClick={() => scrollToSection(topStoriesRef)}
               className="text-sm font-medium hover:text-red-700 transition-colors"
             >
               Top Stories
             </button>
+           </Link>
+           <Link href="#regional">
             <button
               onClick={() => scrollToSection(regionalRef)}
               className="text-sm font-medium hover:text-red-700 transition-colors"
             >
               Regional
             </button>
+           </Link>
+           <Link href="#gallery">
             <button
               onClick={() => scrollToSection(galleryRef)}
               className="text-sm font-medium hover:text-red-700 transition-colors"
             >
               Gallery
             </button>
+           </Link>
           </nav>
+
+          {/* Right: Search */}
           <div className="flex items-center gap-2">
             <form className="hidden md:block" onSubmit={handleSearch}>
               <div className="relative">
@@ -145,45 +152,47 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-black border-b border-[#222222] py-4 px-4">
             <nav className="flex flex-col space-y-4">
+              <Link href="#">
               <button
-                onClick={() => scrollToSection({ current: document.getElementById("top") })}
+                onClick={() => scrollToSection({ current: document.getElementById("top") as HTMLElement })}
                 className="text-sm font-medium hover:text-red-700 transition-colors"
               >
                 Home
               </button>
+              </Link>
+              <Link href="#topstories">
               <button
                 onClick={() => scrollToSection(topStoriesRef)}
                 className="text-sm font-medium hover:text-red-700 transition-colors"
               >
                 Top Stories
               </button>
+              </Link>
+             <Link href="#regional">
               <button
                 onClick={() => scrollToSection(regionalRef)}
                 className="text-sm font-medium hover:text-red-700 transition-colors"
               >
                 Regional
               </button>
-              <button
-                onClick={() => scrollToSection(opinionRef)}
-                className="text-sm font-medium hover:text-red-700 transition-colors"
-              >
-                Opinion
-              </button>
+             </Link>
+              <Link href="#gallery">
               <button
                 onClick={() => scrollToSection(galleryRef)}
                 className="text-sm font-medium hover:text-red-700 transition-colors"
               >
                 Gallery
               </button>
+              </Link>
             </nav>
           </div>
         )}
 
-        {/* Mobile search */}
+        {/* Mobile Search */}
         {isSearching && (
           <div className="md:hidden bg-black border-b border-[#222222] py-4 px-4">
             <form onSubmit={handleSearch}>
@@ -203,22 +212,29 @@ export default function Home() {
         )}
       </header>
 
-      {/* Breaking News Banner */}
-      <div className="bg-red-700 py-3 px-4">
-        <div className="container flex items-center gap-3 overflow-hidden">
-          <Badge variant="outline" className="shrink-0 border-black bg-white text-red-500 px-3 py-1 text-sm font-bold">
-            BREAKING
-          </Badge>
-          <div className="overflow-hidden whitespace-nowrap">
-            <p id="news-ticker" className="inline-block whitespace-nowrap text-sm font-medium text-white">
-              Nepal's Prime Minister announces new economic reforms • Heavy rainfall expected in eastern regions •
-              National football team advances to semifinals • Government unveils new infrastructure plan • International
-              aid arrives for flood victims in southern districts • Nepal's Prime Minister announces new economic
-              reforms • Heavy rainfall expected in eastern regions • National football team advances to semifinals
-            </p>
-          </div>
-        </div>
-      </div>
+     {/* Breaking News Banner */}
+<div className="bg-red-700 py-3 px-4 overflow-hidden">
+  <div className="container flex items-center gap-3">
+    <Badge
+      variant="outline"
+      className="shrink-0 border-black bg-white text-red-500 px-3 py-1 text-sm font-bold"
+    >
+      BREAKING
+    </Badge>
+    <div className="relative overflow-hidden whitespace-nowrap w-full">
+      <p
+        id="news-ticker"
+        className="inline-block whitespace-nowrap text-sm font-medium text-white animate-ticker"
+      >
+        Nepal's Prime Minister announces new economic reforms • Heavy rainfall expected in eastern regions •
+        National football team advances to semifinals • Government unveils new infrastructure plan • International
+        aid arrives for flood victims in southern districts • Nepal's Prime Minister announces new economic
+        reforms • Heavy rainfall expected in eastern regions • National football team advances to semifinals
+      </p>
+    </div>
+  </div>
+</div>
+
 
       <main id="top" className="container px-4 py-6 md:px-6 md:py-8">
         {/* Featured News */}
@@ -236,7 +252,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                 <div className="absolute bottom-0 p-4 md:p-6">
                   <Badge className="mb-2 bg-red-700 hover:bg-red-800">Politics</Badge>
-                  <h1 className="mb-2 text-2xl font-bold md:text-3xl lg:text-4xl">
+                  <h1 className="mb-2 text-2xl font-bold md:text-3xl lg:text-4xl text-white/80">
                     Nepal Parliament Passes Historic Infrastructure Bill
                   </h1>
                   <div className="flex items-center gap-2 text-sm text-gray-300">
@@ -267,7 +283,7 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                   <div className="absolute bottom-0 p-4">
                     <Badge className="mb-2 bg-red-700 hover:bg-red-800">Economy</Badge>
-                    <h2 className="mb-2 text-lg font-bold">Nepal's Currency Strengthens Against US Dollar</h2>
+                    <h2 className="mb-2 text-lg font-bold text-white/80">Nepal's Currency Strengthens Against US Dollar</h2>
                     <div className="flex items-center gap-2 text-xs text-gray-300">
                       <Clock className="h-3 w-3" />
                       <span>5 hours ago</span>
@@ -294,7 +310,7 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                   <div className="absolute bottom-0 p-4">
                     <Badge className="mb-2 bg-red-700 hover:bg-red-800">Sports</Badge>
-                    <h2 className="mb-2 text-lg font-bold">National Cricket Team Secures Victory in Asian Cup</h2>
+                    <h2 className="mb-2 text-lg font-bold text-white/80">National Cricket Team Secures Victory in Asian Cup</h2>
                     <div className="flex items-center gap-2 text-xs text-gray-300">
                       <Clock className="h-3 w-3" />
                       <span>8 hours ago</span>
@@ -314,7 +330,7 @@ export default function Home() {
         </section>
 
         {/* News Categories */}
-        <section ref={topStoriesRef} className="mb-10 scroll-mt-20">
+        <section ref={topStoriesRef} className="mb-10 scroll-mt-20" id="topstories">
           <Tabs defaultValue="latest" className="w-full" onValueChange={setActiveTab} value={activeTab}>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">Top Stories</h2>
@@ -325,9 +341,9 @@ export default function Home() {
               </TabsList>
             </div>
 
-            <TabsContent value="latest" className="mt-0">
+            <TabsContent value="latest" className="mt-0 ">
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <Card className="overflow-hidden border-0 bg-[#111111] hover:shadow-lg transition-shadow duration-300">
+                <Card className="overflow-hidden border-0 bg-[#111111] hover:shadow-lg text-white transition-shadow duration-300">
                   <div className="relative aspect-video overflow-hidden">
                     <Image
                       src="/4.jpg"
@@ -368,7 +384,7 @@ export default function Home() {
                   </CardFooter>
                 </Card>
 
-                <Card className="overflow-hidden border-0 bg-[#111111] hover:shadow-lg transition-shadow duration-300">
+                <Card className="overflow-hidden border-0 bg-[#111111]  text-white hover:shadow-lg transition-shadow duration-300">
                   <div className="relative aspect-video overflow-hidden">
                     <Image
                       src="/5.jpeg"
@@ -409,7 +425,7 @@ export default function Home() {
                   </CardFooter>
                 </Card>
 
-                <Card className="overflow-hidden border-0 bg-[#111111] hover:shadow-lg transition-shadow duration-300">
+                <Card className="overflow-hidden border-0 text-white bg-[#111111] hover:shadow-lg transition-shadow duration-300">
                   <div className="relative aspect-video overflow-hidden">
                     <Image
                       src="/6.jpeg"
@@ -450,7 +466,7 @@ export default function Home() {
                   </CardFooter>
                 </Card>
 
-                <Card className="overflow-hidden border-0 bg-[#111111] hover:shadow-lg transition-shadow duration-300">
+                <Card className="overflow-hidden border-0 text-white bg-[#111111] hover:shadow-lg transition-shadow duration-300">
                   <div className="relative aspect-video overflow-hidden">
                     <Image
                       src="/7.png"
@@ -491,7 +507,7 @@ export default function Home() {
                   </CardFooter>
                 </Card>
 
-                <Card className="overflow-hidden border-0 bg-[#111111] hover:shadow-lg transition-shadow duration-300">
+                <Card className="overflow-hidden border-0 text-white bg-[#111111] hover:shadow-lg transition-shadow duration-300">
                   <div className="relative aspect-video overflow-hidden">
                     <Image
                       src="/8.webp"
@@ -532,7 +548,7 @@ export default function Home() {
                   </CardFooter>
                 </Card>
 
-                <Card className="overflow-hidden border-0 bg-[#111111] hover:shadow-lg transition-shadow duration-300">
+                <Card className="overflow-hidden border-0 text-white bg-[#111111] hover:shadow-lg transition-shadow duration-300">
                   <div className="relative aspect-video overflow-hidden">
                     <Image
                       src="/9.jpeg"
@@ -574,9 +590,6 @@ export default function Home() {
                 </Card>
               </div>
             </TabsContent>
-
-           
-           
           </Tabs>
         </section>
 
@@ -620,7 +633,7 @@ export default function Home() {
         </section>
 
         {/* Regional News Section */}
-        <section ref={regionalRef} className="mb-10 scroll-mt-20">
+        <section ref={regionalRef} className="mb-10 text-white scroll-mt-20" id="regional">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold">Regional Updates</h2>
             <Button variant="link" className="text-sm font-medium text-red-700 hover:text-red-600 p-0">
@@ -628,7 +641,7 @@ export default function Home() {
             </Button>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
-            <Card className="overflow-hidden border-0 bg-[#111111] hover:shadow-lg transition-shadow duration-300">
+            <Card className="overflow-hidden border-0 text-white bg-[#111111] hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="p-4 border-b border-[#222222]">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-bold text-red-700">Kathmandu Valley</h3>
@@ -671,7 +684,7 @@ export default function Home() {
                 </ul>
               </CardContent>
             </Card>
-            <Card className="overflow-hidden border-0 bg-[#111111] hover:shadow-lg transition-shadow duration-300">
+            <Card className="overflow-hidden border-0 text-white bg-[#111111] hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="p-4 border-b border-[#222222]">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-bold text-red-700">Pokhara</h3>
@@ -710,7 +723,7 @@ export default function Home() {
                 </ul>
               </CardContent>
             </Card>
-            <Card className="overflow-hidden border-0 bg-[#111111] hover:shadow-lg transition-shadow duration-300">
+            <Card className="overflow-hidden border-0 text-white bg-[#111111] hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="p-4 border-b border-[#222222]">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-bold text-red-700">Eastern Nepal</h3>
@@ -752,30 +765,30 @@ export default function Home() {
           </div>
         </section>
 
-
         {/* Photo Gallery Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-  {imageData.map(({ location, label, src }) => (
-    <div
-      key={location}
-      className="relative aspect-square overflow-hidden rounded-lg cursor-pointer"
-      onClick={() => alert(`Opening full-size image of ${location}`)}
-    >
-      <Image
-        src={src}
-        alt={location}
-        fill
-        className="object-cover transition-transform hover:scale-105 duration-500"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-      <div className="absolute bottom-0 p-3">
-        <p className="text-sm font-medium text-white">{label}</p>
-      </div>
-    </div>
-  ))}
-</div>
-
-
+        <section ref={galleryRef} className="mb-10 scroll-mt-20" id="gallery">
+          <h2 className="mb-6 text-2xl font-bold">Photo Gallery</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {imageData.map(({ location, label, src }) => (
+              <div
+                key={location}
+                className="relative aspect-square overflow-hidden rounded-lg cursor-pointer"
+                onClick={() => alert(`Opening full-size image of ${location}`)}
+              >
+                <Image
+                  src={src || "/placeholder.svg"}
+                  alt={location}
+                  fill
+                  className="object-cover transition-transform hover:scale-105 duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                <div className="absolute bottom-0 p-3">
+                  <p className="text-sm font-medium text-white">{label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Popular Tags Section */}
         <section className="mb-10">
@@ -808,142 +821,147 @@ export default function Home() {
       </main>
 
       {/* Footer */}
- 
-    <footer className="border-t border-[#222222] bg-black py-8">
-      <div className="container px-4 md:px-6">
-        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
-          {/* Logo & Socials */}
-          <div>
-            <Link href="/" className="flex items-center gap-2">
-              <div className="text-xl font-bold tracking-tighter">
-                <Image
-                  src="/logo.png"
-                  alt="logo"
-                  width={120}
-                  height={120}
-                  className="object-cover transition-transform"
-                />
+      <footer className="border-t border-[#222222] bg-black py-8">
+        <div className="container px-4 md:px-6">
+          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
+            {/* Logo & Socials */}
+            <div>
+              <Link href="/" className="flex items-center gap-2">
+                <div className="text-xl font-bold tracking-tighter">
+                  <Image
+                    src="/logo.png"
+                    alt="logo"
+                    width={120}
+                    height={120}
+                    className="object-cover transition-transform"
+                  />
+                </div>
+              </Link>
+              <p className="mb-4 text-sm text-gray-400">
+                Your trusted source for the latest news and updates from Nepal, delivered 24/7.
+              </p>
+              <div className="flex gap-4">
+                {/* Facebook */}
+                <a
+                  href="https://www.facebook.com/profile.php?id=61559843632740"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white hover:bg-red-900/20 p-2 rounded-full transition-colors"
+                >
+                  <svg
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                  </svg>
+                </a>
+                {/* TikTok */}
+                <a
+                  href="https://www.tiktok.com/@nepalinlast24hour_?_t=ZS-8wTnAoO2E6b&_r=1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white hover:bg-red-900/20 p-2 rounded-full transition-colors"
+                >
+                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 0h4a8 8 0 01-8 8v8a4 4 0 11-4-4h0V8a8 8 0 108 8V8a12 12 0 004 0V4a8 8 0 01-4 0V0z" />
+                  </svg>
+                </a>
+                {/* Instagram */}
+                <a
+                  href="https://www.instagram.com/nepalinlast24hours/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white hover:bg-red-900/20 p-2 rounded-full transition-colors"
+                >
+                  <svg
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    viewBox="0 0 24 24"
+                  >
+                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                  </svg>
+                </a>
               </div>
-            </Link>
-            <p className="mb-4 text-sm text-gray-400">
-              Your trusted source for the latest news and updates from Nepal, delivered 24/7.
-            </p>
-            <div className="flex gap-4">
-              {/* Facebook */}
-              <a
-                href="https://www.facebook.com/profile.php?id=61559843632740"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white hover:bg-red-900/20 p-2 rounded-full transition-colors"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2"
-                  strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                </svg>
-              </a>
-              {/* Twitter */}
-             <a
-  href="https://www.tiktok.com/@nepalinlast24hour_?_t=ZS-8wTnAoO2E6b&_r=1"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="text-gray-400 hover:text-white hover:bg-red-900/20 p-2 rounded-full transition-colors"
->
-  <svg
-    className="h-5 w-5"
-    fill="currentColor"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M16 0h4a8 8 0 01-8 8v8a4 4 0 11-4-4h0V8a8 8 0 108 8V8a12 12 0 004 0V4a8 8 0 01-4 0V0z" />
-  </svg>
-</a>
+            </div>
 
-              {/* Instagram */}
+            {/* Categories */}
+            <div>
+              <h3 className="mb-4 text-lg font-bold">Categories</h3>
+              <ul className="space-y-2 text-sm">
+                {["Politics", "Economy", "Sports", "Entertainment", "Technology", "Health"].map((category) => (
+                  <li key={category}>
+                    <button
+                      className="text-gray-400 hover:text-red-700 transition-colors"
+                      onClick={() => alert(`Opening ${category} category`)}
+                    >
+                      {category}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h3 className="mb-4 text-lg font-bold">Quick Links</h3>
+              <ul className="space-y-2 text-sm">
+                {[
+                  { name: "About Us", action: "Opening About Us page" },
+                  { name: "Contact Us", action: "Opening Contact Us page" },
+                  { name: "Advertise", action: "Opening Advertise page" },
+                  { name: "Privacy Policy", action: "Opening Privacy Policy page" },
+                  { name: "Terms of Service", action: "Opening Terms of Service page" },
+                ].map((link) => (
+                  <li key={link.name}>
+                    <button
+                      className="text-gray-400 hover:text-red-700 transition-colors"
+                      onClick={() => alert(link.action)}
+                    >
+                      {link.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact Info */}
+            <div>
+              <h3 className="mb-4 text-lg font-bold">Contact</h3>
+              <address className="not-italic">
+                <p className="mb-2 text-sm text-gray-400">Kathmandu, Nepal</p>
+                <p className="mb-2 text-sm text-gray-400">Email: nepalinlast24hour@gmail.com</p>
+                <p className="mb-4 text-sm text-gray-400">Phone: +977 9763487935</p>
+              </address>
               <a
-                href="https://www.instagram.com/nepalinlast24hours/"
+                href="https://wa.me/9779763487935?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20your%20services."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white hover:bg-red-900/20 p-2 rounded-full transition-colors"
+                className="inline-block bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition-colors"
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2"
-                  strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                </svg>
+                Contact Us
               </a>
             </div>
           </div>
 
-          {/* Categories */}
-          <div>
-            <h3 className="mb-4 text-lg font-bold">Categories</h3>
-            <ul className="space-y-2 text-sm">
-              {["Politics", "Economy", "Sports", "Entertainment", "Technology", "Health"].map((category) => (
-                <li key={category}>
-                  <button
-                    className="text-gray-400 hover:text-red-700 transition-colors"
-                    onClick={() => alert(`Opening ${category} category`)}
-                  >
-                    {category}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="mb-4 text-lg font-bold">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
-              {[
-                { name: "About Us", action: "Opening About Us page" },
-                { name: "Contact Us", action: "Opening Contact Us page" },
-                { name: "Advertise", action: "Opening Advertise page" },
-                { name: "Privacy Policy", action: "Opening Privacy Policy page" },
-                { name: "Terms of Service", action: "Opening Terms of Service page" },
-              ].map((link) => (
-                <li key={link.name}>
-                  <button
-                    className="text-gray-400 hover:text-red-700 transition-colors"
-                    onClick={() => alert(link.action)}
-                  >
-                    {link.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h3 className="mb-4 text-lg font-bold">Contact</h3>
-            <address className="not-italic">
-              <p className="mb-2 text-sm text-gray-400">Kathmandu, Nepal</p>
-              <p className="mb-2 text-sm text-gray-400">Email: nepalinlast24hour@gmail.com</p>
-              <p className="mb-4 text-sm text-gray-400">Phone: +977 9763487935</p>
-            </address>
-        <a
-  href="https://wa.me/9779763487935?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20your%20services."
-  target="_blank"
-  rel="noopener noreferrer"
-  className="inline-block bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition-colors"
->
-  Contact Us
-</a>
-
+          {/* Bottom Section */}
+          <div className="mt-8 border-t border-[#222222] pt-8 text-center">
+            <p className="text-sm text-gray-400">
+              © {new Date().getFullYear()} Nepal in Last 24 Hour. All rights reserved.
+            </p>
           </div>
         </div>
-
-        {/* Bottom Section */}
-        <div className="mt-8 border-t border-[#222222] pt-8 text-center">
-          <p className="text-sm text-gray-400">
-            © {new Date().getFullYear()} Nepal in Last 24 Hour. All rights reserved.
-          </p>
-        </div>
-      </div>
-    </footer>
-
+      </footer>
     </div>
   )
 }
