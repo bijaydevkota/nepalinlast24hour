@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { InquiryForm } from "@/components/contact"
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -819,6 +820,8 @@ export default function Home() {
           </div>
         </section>
       </main>
+
+      <InquiryForm/>
 
       {/* Footer */}
       <footer className="border-t border-[#222222] bg-black py-8">
